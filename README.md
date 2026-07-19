@@ -1,26 +1,29 @@
 # Early Sepsis Risk Detection
 
-A reproducible MATLAB portfolio project exploring diagnosis-labelled sepsis-risk modelling with the MIMIC-III Clinical Database Demo.
+A reproducible MATLAB portfolio project exploring **first-24-hour vital-sign modelling of an admission-level sepsis diagnosis label** with the MIMIC-III Clinical Database Demo.
 
 > **Educational research only.** This repository is not a clinical diagnostic system and must not be used for patient-care decisions.
 
-## Project overview
+## Project history
 
-This work began as **Aboubakr Ibrahim's Biomedical Engineering graduation project at Işık University**. The original academic prototype explored structured ICU data, qSOFA-related variables, Logistic Regression with Lasso, Random Forest, neural networks, class imbalance, and model evaluation.
+This work began as **Aboubakr Ibrahim's Biomedical Engineering graduation project at Işık University**. The original June 2024 prototype explored qSOFA-related variables, Logistic Regression with Lasso, Random Forest, a neural-network experiment, class imbalance, and model evaluation.
 
-The portfolio version preserves that engineering story while correcting important methodological weaknesses.
+The original academic package is preserved as project history. Its headline results are not presented as clinical evidence because a later audit found circular labels, synthetic variables, preprocessing leakage, and model-evaluation leakage.
 
-## What was improved
+## Portfolio Version 2
 
-- Replaced qSOFA-derived targets with diagnosis-based admission labels
-- Removed randomly generated heart-rate and temperature values
+The public pipeline now:
+
+- Uses admission-level diagnosis labels instead of qSOFA-derived targets
 - Uses only observed chart measurements
+- Restricts features to the first 24 hours after recorded hospital admission
+- Excludes pre-admission and later-admission measurements
 - Keeps every admission from a patient in one validation fold
 - Fits median imputation and standardization on training data only
 - Trains Logistic Regression and Random Forest separately inside every fold
-- Adds balanced accuracy, sensitivity, specificity, precision, F1, ROC-AUC, and PR-AUC
-- Protects datasets, credentials, generated exports, and local machine paths
-- Documents limitations instead of promoting the original 100% result
+- Saves fold metrics, prediction-level outputs, cohort counts, and missingness
+- Protects datasets, credentials, generated exports, and local paths
+- Documents residual limitations instead of promoting the original 100% result
 
 ## Repository structure
 
@@ -30,6 +33,7 @@ The portfolio version preserves that engineering story while correcting importan
 ├── src/
 │   ├── run_pipeline.m
 │   ├── prepare_cohort.m
+│   ├── filter_observation_window.m
 │   ├── build_features.m
 │   ├── make_patient_folds.m
 │   ├── evaluate_models.m
@@ -53,21 +57,11 @@ The portfolio version preserves that engineering story while correcting importan
 - Statistics and Machine Learning Toolbox
 - MIMIC-III Clinical Database Demo 1.4
 
-The refactored baseline does not require the Deep Learning Toolbox.
+The Version 2 baselines do not require the Deep Learning Toolbox.
 
 ## Data setup
 
-1. Obtain MIMIC-III Demo from [PhysioNet](https://physionet.org/content/mimiciii-demo/1.4/).
-2. Keep the CSV files outside version control, for example:
-
-```text
-data/mimiciii-demo/1.4/
-├── ADMISSIONS.csv
-├── DIAGNOSES_ICD.csv
-└── CHARTEVENTS.csv
-```
-
-The `data/` directory is ignored by Git. See [data-access.md](docs/data-access.md).
+Obtain MIMIC-III Demo 1.4 from [PhysioNet](https://physionet.org/content/mimiciii-demo/1.4/) and keep the CSV files outside version control. See [data-access.md](docs/data-access.md).
 
 ## Run the project
 
@@ -78,11 +72,13 @@ addpath("config", "src");
 results = run_pipeline("data/mimiciii-demo/1.4");
 ```
 
-The pipeline writes privacy-safe generated summaries to `outputs/`:
+The pipeline writes generated summaries to `outputs/`:
 
 - `cohort_summary.csv`
+- `missingness_summary.csv`
 - `fold_metrics.csv`
 - `summary_metrics.csv`
+- `fold_predictions.csv`
 - `experiment_results.mat`
 
 Generated outputs remain ignored until they are reviewed and deliberately selected for publication.
@@ -95,37 +91,20 @@ results = runtests("tests");
 table(results)
 ```
 
-Tests verify patient isolation across folds and core binary metrics.
+Tests cover patient isolation, fold class coverage, observation-window boundaries, and core binary metrics.
 
-## Model design
+## Interpretation
 
-The current baselines are:
-
-- L1-regularized Logistic Regression
-- Random Forest with uniform class priors
-
-Features are admission-level medians of observed respiratory rate, systolic blood pressure, total GCS, heart rate, and temperature after physiologic range checks.
-
-See [methodology.md](docs/methodology.md) for the full experimental design.
-
-## Honest limitations
-
-MIMIC-III Demo is small and intended for education and software development. It cannot establish clinical generalizability. The repository has no external or prospective validation, and performance values are intentionally not published until the refactored pipeline is executed and reviewed.
-
-See [limitations.md](docs/limitations.md) for the complete audit.
+The target is an admission-level ICD-9 diagnosis label and does not provide an exact time of sepsis onset. The project therefore evaluates association between first-24-hour observed measurements and a diagnosis recorded for the admission. It does not establish real-time onset prediction or clinical generalizability.
 
 ## Verification status
 
-- Repository structure: complete
-- Code refactor: complete
-- Static privacy and path audit: complete
-- Helper tests: included
-- MATLAB runtime execution: pending on a MATLAB environment
+- Dataset feasibility audit: complete
+- First-24-hour cohort logic: independently checked against the supplied MIMIC-III Demo tables
+- Source refactor and static review: complete
+- Privacy and path audit: complete
+- MATLAB runtime execution: pending
 - Clinical validation: not claimed
-
-## Ethics and intended use
-
-No identifiable patient data, restricted datasets, credentials, or client information are included. The software is provided for education, research demonstration, and professional portfolio review only.
 
 ## Author
 
