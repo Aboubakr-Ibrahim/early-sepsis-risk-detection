@@ -1,0 +1,37 @@
+# Clinical datasets and exports
+data/
+*.csv
+*.tsv
+*.mat
+*.xlsx
+*.xls
+*.edf
+*.hea
+*.dat
+
+# Credentials and local configuration
+.env
+.env.*
+*credential*
+*secret*
+*token*
+
+# MATLAB generated files
+*.asv
+*.autosave
+slprj/
+codegen/
+*.mex*
+*.mlappinstall
+*.prj
+
+# Local paths and operating-system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Generated outputs
+output/
+outputs/
+figures/generated/
+results/generated/
