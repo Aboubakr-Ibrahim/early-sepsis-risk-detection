@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this portfolio project, please cite it as below."
+title: "Early Sepsis Risk Detection: MATLAB Academic Prototype"
+type: software
+authors:
+  - family-names: Ibrahim
+    given-names: Aboubakr
+repository-code: "https://github.com/Aboubakr-Ibrahim/early-sepsis-risk-detection"
+license: MIT
+version: 1.0.0
+date-released: 2026-07-19
+keywords:
+  - biomedical engineering
+  - sepsis
+  - MATLAB
+  - MIMIC-III
+  - machine learning
