@@ -1,14 +1,31 @@
-# Source code status
+# Source code
 
-The original graduation-project MATLAB script is being audited and converted into modular, reproducible components.
+The refactored pipeline is organized into small, auditable MATLAB functions.
 
-Planned modules:
+| File | Responsibility |
+|---|---|
+| `run_pipeline.m` | Validates inputs, orchestrates the experiment, and saves summaries |
+| `prepare_cohort.m` | Creates independent diagnosis-based admission labels |
+| `build_features.m` | Extracts and aggregates observed chart measurements |
+| `make_patient_folds.m` | Creates stratified patient-level folds |
+| `evaluate_models.m` | Fits fold-specific preprocessing and baseline models |
+| `compute_metrics.m` | Computes binary classification and ranking metrics |
 
-- `prepare_cohort.m`
-- `build_features.m`
-- `partition_patients.m`
-- `train_models.m`
-- `evaluate_models.m`
-- `run_pipeline.m`
+The original academic script is intentionally not published unchanged because it contains machine-specific paths, synthetic variables, circular labels, and evaluation leakage. Those issues are documented in [limitations](../docs/limitations.md).
 
-The original script is not published unchanged because it contains machine-specific paths and methodological issues documented in [limitations](../docs/limitations.md). The cleaned implementation will be added after validation.
+## Entry point
+
+```matlab
+addpath("config", "src");
+results = run_pipeline("data/mimiciii-demo/1.4");
+```
+
+## Design guarantees
+
+- No synthetic clinical values
+- No absolute personal paths
+- Diagnosis labels are independent from input features
+- Patient-level fold isolation
+- Training-only imputation and scaling
+- A new model is fitted inside every fold
+- Raw datasets and generated outputs are excluded from Git
