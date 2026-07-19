@@ -2,27 +2,24 @@
 
 ## Dataset
 
-This project was developed using the **MIMIC-III Clinical Database Demo, version 1.4**, distributed by PhysioNet.
-
-Dataset files are intentionally excluded from this repository.
+This project uses the **MIMIC-III Clinical Database Demo, version 1.4**, distributed by PhysioNet. Dataset files are intentionally excluded from this repository.
 
 ## Obtain the data
 
-Download the dataset directly from the official PhysioNet page:
+Download the dataset from the official PhysioNet page:
 
 - https://physionet.org/content/mimiciii-demo/1.4/
 
-Place locally obtained files in a directory named `data/`. That directory is excluded by `.gitignore`.
+Place locally obtained files under `data/mimiciii-demo/1.4/`. The entire `data/` directory is excluded by `.gitignore`.
 
-## Expected source tables
+## Required tables for Version 2
 
-The original prototype used:
+- `ADMISSIONS.csv` — patient/admission identifiers and admission time
+- `DIAGNOSES_ICD.csv` — admission-level ICD-9 diagnosis codes
+- `CHARTEVENTS.csv` — observed vital measurements and chart times
 
-- `ADMISSIONS.csv`
-- `DIAGNOSES_ICD.csv`
-- `PATIENTS.csv`
-- `CHARTEVENTS.csv`
+Other MIMIC-III Demo tables are not required by the baseline pipeline.
 
 ## Data responsibility
 
-Users are responsible for following the dataset licence, citation requirements, and all applicable PhysioNet terms. Do not commit raw medical datasets, credentials, access tokens, or identifiable information.
+Users are responsible for following the dataset licence, citation requirements, and all applicable PhysioNet terms. Do not commit raw medical datasets, credentials, access tokens, private paths, or identifiable information.
