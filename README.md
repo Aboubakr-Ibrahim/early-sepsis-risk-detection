@@ -1,77 +1,131 @@
 # Early Sepsis Risk Detection
 
-A MATLAB-based academic prototype exploring early sepsis-risk modelling with the MIMIC-III Clinical Database Demo.
+A reproducible MATLAB portfolio project exploring diagnosis-labelled sepsis-risk modelling with the MIMIC-III Clinical Database Demo.
 
-> **Portfolio status:** The original graduation-project workflow is being refactored for reproducibility, leakage-safe evaluation, and a clear separation between observed and synthetic variables. This repository documents both the engineering work and its limitations. It is not a clinical diagnostic system.
+> **Educational research only.** This repository is not a clinical diagnostic system and must not be used for patient-care decisions.
 
 ## Project overview
 
-This project was developed by **Aboubakr Ibrahim** as a Biomedical Engineering graduation project at Işık University. It explored how structured ICU information and qSOFA-related variables could support an early sepsis-risk modelling workflow in MATLAB.
+This work began as **Aboubakr Ibrahim's Biomedical Engineering graduation project at Işık University**. The original academic prototype explored structured ICU data, qSOFA-related variables, Logistic Regression with Lasso, Random Forest, neural networks, class imbalance, and model evaluation.
 
-The original prototype included:
+The portfolio version preserves that engineering story while correcting important methodological weaknesses.
 
-- MIMIC-III demo data preparation
-- ICD-9-based sepsis cohort exploration
-- Respiratory rate, systolic blood pressure, and Glasgow Coma Scale processing
-- qSOFA-related feature engineering
-- Logistic Regression with Lasso, Random Forest, and a neural-network prototype
-- Class-imbalance handling
-- Confusion matrices and classification metrics
-- Feature-importance analysis
+## What was improved
 
-## What this repository demonstrates
-
-- Biomedical data preparation in MATLAB
-- Clinical feature engineering
-- Machine-learning experimentation
-- Model evaluation and visualization
-- Critical review of methodological limitations
-- Reproducible research practices
+- Replaced qSOFA-derived targets with diagnosis-based admission labels
+- Removed randomly generated heart-rate and temperature values
+- Uses only observed chart measurements
+- Keeps every admission from a patient in one validation fold
+- Fits median imputation and standardization on training data only
+- Trains Logistic Regression and Random Forest separately inside every fold
+- Adds balanced accuracy, sensitivity, specificity, precision, F1, ROC-AUC, and PR-AUC
+- Protects datasets, credentials, generated exports, and local machine paths
+- Documents limitations instead of promoting the original 100% result
 
 ## Repository structure
 
 ```text
-early-sepsis-risk-detection/
-├── README.md
+├── config/
+│   └── default_config.m
 ├── src/
-│   └── README.md
+│   ├── run_pipeline.m
+│   ├── prepare_cohort.m
+│   ├── build_features.m
+│   ├── make_patient_folds.m
+│   ├── evaluate_models.m
+│   └── compute_metrics.m
+├── tests/
+│   └── test_pipeline_helpers.m
 ├── docs/
 │   ├── methodology.md
 │   ├── limitations.md
 │   └── data-access.md
 ├── results/
 │   └── README.md
+├── CITATION.cff
+├── LICENSE
 └── .gitignore
 ```
 
-## Data
+## Requirements
 
-The project uses the public **MIMIC-III Clinical Database Demo** distributed by PhysioNet. Dataset files are not included here. Obtain data directly from the official source and follow its terms of use.
-
-## Important limitations
-
-The original academic prototype requires careful interpretation:
-
-- Some additional variables were synthetically generated for experimentation.
-- Preprocessing occurred before cross-validation in parts of the original workflow.
-- The first Random Forest implementation was not retrained independently inside every validation fold.
-- qSOFA-derived labels and qSOFA-related predictors create a risk of circular evaluation.
-- Original performance values must not be interpreted as evidence of clinical validity.
-
-The refactored version will use fold-specific training, training-only preprocessing, explicit feature provenance, safer evaluation, and cautious reporting.
-
-## Tools
-
-- MATLAB
+- MATLAB with support for arguments blocks and string arrays
 - Statistics and Machine Learning Toolbox
-- Deep Learning Toolbox
-- MIMIC-III Clinical Database Demo
+- MIMIC-III Clinical Database Demo 1.4
+
+The refactored baseline does not require the Deep Learning Toolbox.
+
+## Data setup
+
+1. Obtain MIMIC-III Demo from [PhysioNet](https://physionet.org/content/mimiciii-demo/1.4/).
+2. Keep the CSV files outside version control, for example:
+
+```text
+data/mimiciii-demo/1.4/
+├── ADMISSIONS.csv
+├── DIAGNOSES_ICD.csv
+└── CHARTEVENTS.csv
+```
+
+The `data/` directory is ignored by Git. See [data-access.md](docs/data-access.md).
+
+## Run the project
+
+From the repository root in MATLAB:
+
+```matlab
+addpath("config", "src");
+results = run_pipeline("data/mimiciii-demo/1.4");
+```
+
+The pipeline writes privacy-safe generated summaries to `outputs/`:
+
+- `cohort_summary.csv`
+- `fold_metrics.csv`
+- `summary_metrics.csv`
+- `experiment_results.mat`
+
+Generated outputs remain ignored until they are reviewed and deliberately selected for publication.
+
+## Run the tests
+
+```matlab
+addpath("src");
+results = runtests("tests");
+table(results)
+```
+
+Tests verify patient isolation across folds and core binary metrics.
+
+## Model design
+
+The current baselines are:
+
+- L1-regularized Logistic Regression
+- Random Forest with uniform class priors
+
+Features are admission-level medians of observed respiratory rate, systolic blood pressure, total GCS, heart rate, and temperature after physiologic range checks.
+
+See [methodology.md](docs/methodology.md) for the full experimental design.
+
+## Honest limitations
+
+MIMIC-III Demo is small and intended for education and software development. It cannot establish clinical generalizability. The repository has no external or prospective validation, and performance values are intentionally not published until the refactored pipeline is executed and reviewed.
+
+See [limitations.md](docs/limitations.md) for the complete audit.
+
+## Verification status
+
+- Repository structure: complete
+- Code refactor: complete
+- Static privacy and path audit: complete
+- Helper tests: included
+- MATLAB runtime execution: pending on a MATLAB environment
+- Clinical validation: not claimed
 
 ## Ethics and intended use
 
-This repository is for education, research demonstration, and professional portfolio purposes only. It must not be used for diagnosis, treatment decisions, or clinical deployment.
-
-No identifiable patient information, restricted clinical data, passwords, or access credentials are included.
+No identifiable patient data, restricted datasets, credentials, or client information are included. The software is provided for education, research demonstration, and professional portfolio review only.
 
 ## Author
 
@@ -79,6 +133,6 @@ No identifiable patient information, restricted clinical data, passwords, or acc
 Biomedical Engineer | Clinical Engineering | Medical Device Quality | Healthcare Data  
 [LinkedIn](https://www.linkedin.com/in/aboubakr-ibrahim-45435a246)
 
-## Status
+## Licence and citation
 
-Repository foundation created. The original MATLAB prototype is under technical review; a cleaned modular version will be added after validation.
+The refactored source code is available under the MIT License. Citation metadata is provided in [CITATION.cff](CITATION.cff).
