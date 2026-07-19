@@ -10,12 +10,13 @@ cfg.outputPath = fullfile(pwd, "outputs");
 cfg.randomSeed = 42;
 cfg.numFolds = 5;
 cfg.numTrees = 200;
+cfg.observationHours = 24;
 
-% Diagnosis-based outcome. Prefix 038 captures 038.xx codes.
+% Admission-level diagnosis label. Prefix 038 captures 038.xx codes.
 cfg.sepsisPrefixes = ["038", "99591", "99592"];
 
-% Common CareVue and MetaVision ITEMIDs. Verify against D_ITEMS for other
-% MIMIC versions before reuse.
+% Common CareVue and MetaVision ITEMIDs. Verify against D_ITEMS before
+% adapting this configuration to another MIMIC version.
 cfg.itemIds.respiratoryRate = [618, 220210];
 cfg.itemIds.systolicBP = [51, 442, 455, 6701, 220179];
 cfg.itemIds.gcsTotal = [198, 226755];
