@@ -23,10 +23,12 @@ end
 fprintf("Preparing diagnosis-labelled admission cohort...\n");
 cohort = prepare_cohort(cfg);
 
-fprintf("Building observed clinical features...\n");
+fprintf("Building observed features from the first %g hours...\n", ...
+    cfg.observationHours);
 dataset = build_features(cfg, cohort);
 assert(height(dataset) >= cfg.numFolds, ...
-    "Too few complete admissions (%d) for %d folds.", height(dataset), cfg.numFolds);
+    "Too few eligible admissions (%d) for %d folds.", ...
+    height(dataset), cfg.numFolds);
 
 fprintf("Creating patient-level folds...\n");
 foldId = make_patient_folds(dataset.subject_id, dataset.sepsis_label, ...
@@ -41,9 +43,12 @@ end
 writetable(results.foldMetrics, fullfile(cfg.outputPath, "fold_metrics.csv"));
 writetable(results.summary, fullfile(cfg.outputPath, "summary_metrics.csv"));
 writetable(results.cohortSummary, fullfile(cfg.outputPath, "cohort_summary.csv"));
+writetable(results.missingness, fullfile(cfg.outputPath, "missingness_summary.csv"));
+writetable(results.predictions, fullfile(cfg.outputPath, "fold_predictions.csv"));
 save(fullfile(cfg.outputPath, "experiment_results.mat"), "results", "cfg");
 
 disp(results.cohortSummary);
+disp(results.missingness);
 disp(results.summary);
 fprintf("Outputs saved to %s\n", cfg.outputPath);
 end
